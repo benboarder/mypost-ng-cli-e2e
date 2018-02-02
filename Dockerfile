@@ -1,4 +1,4 @@
-FROM benboarder/mypost-ng-cli:latest
+FROM benboarder/mypost-ng-cli-karma:latest
 
 LABEL name="mypost-ng-cli-e2e" \
       maintainer="DDCTeamWookie <DLDDCTeamWookie@auspost.com.au>" \
