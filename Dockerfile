@@ -1,11 +1,14 @@
-FROM trion/ng-cli-karma:1.6.6
+FROM benboarder/mypost-ng-cli:latest
 
-MAINTAINER trion development GmbH "info@trion.de"
+LABEL name="mypost-ng-cli-e2e" \
+      maintainer="DDCTeamWookie <DLDDCTeamWookie@auspost.com.au>" \
+      version="1.0" \
+      description="The headless docker container for MyPost Consumer automated e2e testing"
+
+ENV TZ="/usr/share/zoneinfo/Australia/Melbourne"
+ENV LANG C.UTF-8
 
 USER root
-###
-# Installation as in https://github.com/docker-library/openjdk/blob/master/8-jdk/Dockerfile due to missing mixins in docker
-###
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		bzip2 \
@@ -17,11 +20,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN echo 'deb http://deb.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/jessie-backports.list
 
-# Default to UTF-8 file.encoding
-ENV LANG C.UTF-8
-
-# add a simple script that can auto-detect the appropriate JAVA_HOME value
-# based on whether the JDK or only the JRE is installed
 RUN { \
 		echo '#!/bin/sh'; \
 		echo 'set -e'; \
@@ -35,8 +33,6 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 ENV JAVA_VERSION 8u131
 ENV JAVA_DEBIAN_VERSION 8u131-b11-1~bpo8+1
 
-# see https://bugs.debian.org/775775
-# and https://github.com/docker-library/java/issues/19#issuecomment-70546872
 ENV CA_CERTIFICATES_JAVA_VERSION 20161107~bpo8+1
 
 RUN set -x \
@@ -48,7 +44,6 @@ RUN set -x \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& [ "$JAVA_HOME" = "$(docker-java-home)" ]
 
-# see CA_CERTIFICATES_JAVA_VERSION notes above
 RUN /var/lib/dpkg/info/ca-certificates-java.postinst configure
 
 USER $USER_ID
